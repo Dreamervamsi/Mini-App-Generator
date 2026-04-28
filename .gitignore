@@ -1,4 +1,7 @@
 # Root gitignore for Mini App Generator
+.gitignore
+package.json
+./query
 
 # Node dependencies
 node_modules/
