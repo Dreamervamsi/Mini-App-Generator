@@ -1,6 +1,8 @@
 import './globals.css';
 import { ConfigProvider } from './ConfigContext';
 import { NotificationProvider } from './NotificationContext';
+import { LocalizationProvider } from './LocalizationContext';
+import { AuthProvider } from './AuthContext';
 
 export const metadata = {
   title: 'Aether | Dynamic App Generator',
@@ -15,13 +17,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <NotificationProvider>
-          <ConfigProvider>
-            <div className="container">
-              {children}
-            </div>
-          </ConfigProvider>
-        </NotificationProvider>
+        <ConfigProvider>
+          <LocalizationProvider>
+            <AuthProvider>
+              <NotificationProvider>
+                <div className="container">
+                  {children}
+                </div>
+              </NotificationProvider>
+            </AuthProvider>
+          </LocalizationProvider>
+        </ConfigProvider>
       </body>
     </html>
   );

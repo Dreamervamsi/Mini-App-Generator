@@ -1,71 +1,85 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import CSVImporter from './CSVImporter';
+import { useTranslation } from '../LocalizationContext';
 
 interface DataTableProps {
-  dataSource: string;
-  fields?: string[];
+  columns: { name: string; label: string }[];
+  data: any[];
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-const DataTable: React.FC<DataTableProps> = ({ dataSource, fields }) => {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function DataTable({ columns, data, onEdit, onDelete }: DataTableProps) {
+  const { t } = useTranslation();
 
-  const fetchData = async () => {
-    try {
-      const res = await fetch(`http://localhost:3001/api/data/${dataSource}`);
-      const json = await res.json();
-      if (Array.isArray(json)) {
-        setData(json);
-      } else {
-        console.error('Expected array but received:', json);
-        setData([]);
-      }
-    } catch (err) {
-      console.error('Fetch error:', err);
-      setData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [dataSource]);
-
-  if (loading) return <div className="card">Loading {dataSource}...</div>;
-
-  const headers = fields || (data.length > 0 ? Object.keys(data[0]).filter(k => !['id', 'owner_id', 'created_at', 'created_at'].includes(k)) : []);
+  if (data.length === 0) {
+    return (
+      <div style={{ 
+        padding: '4rem', 
+        textAlign: 'center', 
+        background: 'rgba(255,255,255,0.02)', 
+        borderRadius: '16px',
+        border: '1px dashed var(--border)'
+      }}>
+        <p style={{ color: 'var(--text-muted)' }}>No records found. Click "Add New" to get started.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3>{dataSource.charAt(0).toUpperCase() + dataSource.slice(1)}</h3>
-      </div>
-      <table className="table">
+    <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid var(--border)' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
         <thead>
-          <tr>
-            {headers.map(h => (
-              <th key={h}>{h.charAt(0).toUpperCase() + h.slice(1)}</th>
+          <tr style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--border)' }}>
+            {columns.map(col => (
+              <th key={col.name} style={{ padding: '1rem 1.5rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                {t(col.label)}
+              </th>
             ))}
+            <th style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {data.map((row, i) => (
-            <tr key={row.id || i}>
-              {headers.map(h => (
-                <td key={h}>{String(row[h])}</td>
+          {data.map((row, idx) => (
+            <tr key={row.id || idx} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="hover-row">
+              {columns.map(col => (
+                <td key={col.name} style={{ padding: '1rem 1.5rem', color: 'var(--text)' }}>
+                  {renderCell(row[col.name])}
+                </td>
               ))}
+              <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                  <button 
+                    onClick={() => onEdit(row.id)}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', padding: '4px' }}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => onDelete(row.id)}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--error)', cursor: 'pointer', padding: '4px' }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
-      {data.length === 0 && <p style={{ textAlign: 'center', opacity: 0.5, marginTop: '1rem' }}>No data found.</p>}
       
-      <CSVImporter target={dataSource} onImported={fetchData} />
+      <style jsx>{`
+        .hover-row:hover {
+          background: rgba(255,255,255,0.02);
+        }
+      `}</style>
     </div>
   );
-};
+}
 
-export default DataTable;
+function renderCell(value: any) {
+  if (value === null || value === undefined) return '-';
+  if (typeof value === 'boolean') return value ? '✅' : '❌';
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
+}
