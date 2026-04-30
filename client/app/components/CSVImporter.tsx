@@ -35,7 +35,7 @@ const CSVImporter: React.FC<CSVImporterProps> = ({ target, onImported }) => {
       // Simple bulk import via multiple hits or a bulk endpoint
       // For now, let's just loop (simplified)
       for (const row of dataRows) {
-        await fetch(`http://localhost:3001/api/data/${target}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/data/${target}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(row),

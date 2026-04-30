@@ -24,7 +24,7 @@ export default function DynamicEntityView({ entity }: DynamicEntityViewProps) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:3001/api/data/${entity.slug}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/data/${entity.slug}`);
       if (res.ok) {
         const json = await res.json();
         setData(json);
@@ -48,8 +48,8 @@ export default function DynamicEntityView({ entity }: DynamicEntityViewProps) {
   const handleSubmit = async (formData: any) => {
     const isEdit = !!editingRecord;
     const url = isEdit 
-      ? `http://localhost:3001/api/data/${entity.slug}/${editingRecord.id}`
-      : `http://localhost:3001/api/data/${entity.slug}`;
+      ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/data/${entity.slug}/${editingRecord.id}`
+      : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/data/${entity.slug}`;
     
     try {
       const res = await fetch(url, {
@@ -76,7 +76,7 @@ export default function DynamicEntityView({ entity }: DynamicEntityViewProps) {
     if (!confirm('Are you sure you want to delete this record?')) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/api/data/${entity.slug}/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/data/${entity.slug}/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {

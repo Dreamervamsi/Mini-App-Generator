@@ -25,7 +25,7 @@ export default function Home() {
     try {
       const parsed = JSON.parse(data);
 
-      const res = await fetch('http://localhost:3001/api/config', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsed),
@@ -46,7 +46,7 @@ export default function Home() {
   const handleExportGitHub = async () => {
     setExporting(true);
     try {
-      const res = await fetch('http://localhost:3001/api/export/github', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/export/github`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
