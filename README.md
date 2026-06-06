@@ -1,9 +1,20 @@
 # Mini-App-Generator
 This is a simple project based on generating an application, by providing relevant json format.
 
-# Basic Flow
+## Basic Flow
 ```mermaid
 flowchart TD
     A[user submits json] --> |LLM reads the json| B(LLM Generates live appliation)
 ```
-TechStack:
+## TechStack:
+Frontend : Nextjs
+Backend : Express
+Language : TypeScript
+ORM : Prisma
+
+## Getting Started
+First, run the development server:
+```
+npm run dev
+```
+Open http://localhost:3000 with your browser to see the result.
