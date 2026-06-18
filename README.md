@@ -1,5 +1,5 @@
 # Mini-App-Generator
-This is a simple project based on generating an application, by providing relevant json format.
+A simple project based on generating an application, by providing relevant json format.
 
 ## Basic Flow
 ```mermaid
